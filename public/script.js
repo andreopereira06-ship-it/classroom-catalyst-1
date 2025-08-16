@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         generateBtn.textContent = 'Generating...';
 
         try {
+            // This is the fetch request to your backend
             const response = await fetch('/generate', {
                 method: 'POST',
                 headers: {
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             displayResults(data.assets);
 
         } catch (error) {
-            resultsContent.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            resultsContent.innerHTML = `<p style="color: red; text-align: center;">Error: ${error.message}</p>`;
             console.error('Error:', error);
         } finally {
             // Hide loading state
@@ -48,15 +49,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function displayResults(text) {
-        // Simple parsing to add some structure. This can be improved.
+        // Simple parsing to add some structure to the AI's response.
         const formattedText = text
-            .replace(/#### (.*?)\n/g, '<h3>$1</h3>') // Main headers
-            .replace(/### (.*?)\n/g, '<h4>$1</h4>')   // Sub-headers
-            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>') // Bold
-            .replace(/\n- /g, '<ul><li>') // List items
-            .replace(/(\n(?!- ))/g, '</p><p>') // Paragraphs
-            .replace(/<\/li>\n/g, '</li></ul>');
+            .replace(/#### (.*?)\n/g, '<h3>$1</h3>')
+            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n- /g, '<ul><li>')
+            .replace(/(\n(?!- ))/g, '</p><p>')
+            .replace(/<\/li>\n/g, '</li></ul>')
+            .replace(/<\/li><\/ul>/g, '</li></ul>');
 
-        resultsContent.innerHTML = `<p>${formattedText}</p>`;
+        let finalHtml = `<p>${formattedText}</p>`
+            .replace(/<p><\/p>/g, '')
+            .replace(/<p><ul>/g, '<ul>')
+            .replace(/<\/ul><\/p>/g, '</ul>');
+
+        resultsContent.innerHTML = finalHtml;
     }
 });
