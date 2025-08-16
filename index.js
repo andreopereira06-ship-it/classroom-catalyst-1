@@ -1,18 +1,3 @@
-{
-  "name": "classroom-catalyst-backend",
-  "version": "1.0.0",
-  "description": "Secure backend for Classroom Catalyst",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "node-fetch": "^2.6.7"
-  }
-}
-```javascript
-// File 2: index.js
 // This is our secure backend server.
 
 const express = require('express');
@@ -55,7 +40,7 @@ app.post('/api/generate', async (req, res) => {
     `;
 
     try {
-        const openaiResponse = await fetch('[https://api.openai.com/v1/chat/completions](https://api.openai.com/v1/chat/completions)', {
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
