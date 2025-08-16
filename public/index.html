@@ -4,73 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classroom Catalyst</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="card">
-        <div class="card-content">
-            <header class="card-header">
-                <h1>Classroom Catalyst</h1>
-                <p>Generate engaging and interactive classroom assets tailored to your students.</p>
+    <main class="app-container">
+        <div class="form-container">
+            <header class="app-header">
+                <h1>Classroom Catalyst ✨</h1>
+                <p>Generate engaging teaching assets in seconds.</p>
             </header>
-
-            <main id="form-view">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="class-input">Class</label>
-                        <input type="text" id="class-input" placeholder="e.g. MBA Year 1">
-                    </div>
-                    <div class="form-group">
-                        <label for="topic">Teaching Topic</label>
-                        <input type="text" id="topic" placeholder="e.g. Principles of Marketing">
-                    </div>
-                    <div class="form-group">
-                        <label for="context">Context</label>
-                        <select id="context">
-                            <option value="">Choose a context</option>
-                            <option value="Exam Preparation">Exam Preparation</option>
-                            <option value="Group Activity">Group Activity</option>
-                            <option value="Ice Breaker">Ice Breaker</option>
-                            <option value="Revision">Revision</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="location">Location</label>
-                        <input type="text" id="location" placeholder="e.g. Ahmedabad">
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="grade-level">Grade</label>
-                        <select id="grade-level">
-                            <option value="">Select Grade</option>
-                            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
-                            <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
-                            <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
-                            <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
-                            <option>Undergraduate</option><option>MBA</option><option>PhD</option>
-                        </select>
-                    </div>
+            <form id="asset-form">
+                <div class="input-group">
+                    <label for="grade">Class / Grade</label>
+                    <input type="text" id="grade" placeholder="e.g., 10th Grade" required>
                 </div>
-                <div class="button-container">
-                    <button id="generate-btn">Generate Teaching Assets</button>
+                <div class="input-group">
+                    <label for="topic">Teaching Topic</label>
+                    <input type="text" id="topic" placeholder="e.g., The Periodic Table" required>
                 </div>
-                <div id="loading" class="loading-container hidden">
-                    <div class="spinner"></div>
-                    <span>Generating...</span>
+                <div class="input-group">
+                    <label for="context">Context</label>
+                    <input type="text" id="context" placeholder="e.g., Introduction to Chemistry">
                 </div>
-            </main>
-
-            <div id="results-view" class="hidden">
-                <div class="results-header">
-                    <h2>Generated Assets</h2>
-                    <button id="back-btn">← Create Another</button>
+                <div class="input-group">
+                    <label for="location">City / Location</label>
+                    <input type="text" id="location" placeholder="e.g., Mumbai (for cultural nuances)">
                 </div>
-                <div id="results-content"></div>
-            </div>
+                <button type="submit" id="generate-btn">Generate Assets</button>
+            </form>
         </div>
-    </div>
+        <div class="results-container">
+            <div id="loading-spinner" class="hidden">
+                <div class="spinner"></div>
+                <p>Crafting your materials...</p>
+            </div>
+            <div id="results-content">
+                </div>
+        </div>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>

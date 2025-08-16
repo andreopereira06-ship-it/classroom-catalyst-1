@@ -1,39 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('asset-form');
     const generateBtn = document.getElementById('generate-btn');
-    const backBtn = document.getElementById('back-btn');
-    
-    const formView = document.getElementById('form-view');
-    const resultsView = document.getElementById('results-view');
-    const loadingDiv = document.getElementById('loading');
+    const loadingSpinner = document.getElementById('loading-spinner');
     const resultsContent = document.getElementById('results-content');
-    const buttonContainer = document.querySelector('.button-container');
 
-    generateBtn.addEventListener('click', async () => {
-        const classInput = document.getElementById('class-input').value;
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get form data
+        const grade = document.getElementById('grade').value;
         const topic = document.getElementById('topic').value;
         const context = document.getElementById('context').value;
         const location = document.getElementById('location').value;
-        const gradeLevel = document.getElementById('grade-level').value;
 
-        if (!classInput || !topic || !gradeLevel) {
-            showMessage("Please fill in Class, Teaching Topic, and Grade.");
-            return;
-        }
-
-        buttonContainer.classList.add('hidden');
-        loadingDiv.classList.remove('hidden');
+        // Show loading state
+        resultsContent.innerHTML = '';
+        loadingSpinner.classList.remove('hidden');
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
 
         try {
-            const response = await fetch('/api/generate', {
+            const response = await fetch('/generate', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    classStandard: classInput, 
-                    topic, 
-                    context, 
-                    location,
-                    grade: gradeLevel
-                })
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ grade, topic, context, location }),
             });
 
             if (!response.ok) {
@@ -42,70 +34,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            displayFormattedResults(data.completion);
-            
-            formView.classList.add('hidden');
-            resultsView.classList.remove('hidden');
+            displayResults(data.assets);
 
         } catch (error) {
-            console.error("Error:", error);
-            showMessage(`Error: ${error.message}`);
+            resultsContent.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            console.error('Error:', error);
         } finally {
-            buttonContainer.classList.remove('hidden');
-            loadingDiv.classList.add('hidden');
+            // Hide loading state
+            loadingSpinner.classList.add('hidden');
+            generateBtn.disabled = false;
+            generateBtn.textContent = 'Generate Assets';
         }
     });
 
-    backBtn.addEventListener('click', () => {
-        resultsView.classList.add('hidden');
-        formView.classList.remove('hidden');
-    });
+    function displayResults(text) {
+        // Simple parsing to add some structure. This can be improved.
+        const formattedText = text
+            .replace(/#### (.*?)\n/g, '<h3>$1</h3>') // Main headers
+            .replace(/### (.*?)\n/g, '<h4>$1</h4>')   // Sub-headers
+            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>') // Bold
+            .replace(/\n- /g, '<ul><li>') // List items
+            .replace(/(\n(?!- ))/g, '</p><p>') // Paragraphs
+            .replace(/<\/li>\n/g, '</li></ul>');
 
-    function displayFormattedResults(completionText) {
-        resultsContent.innerHTML = ''; 
-        const sections = completionText.split('####').filter(s => s.trim() !== '');
-        sections.forEach(section => {
-            const card = document.createElement('div');
-            card.className = 'result-card';
-            const lines = section.trim().split('\n');
-            const titleLine = lines.shift().replace(/[\d.\*]/g, '').trim();
-            const content = lines.join('\n').trim();
-            const titleElement = document.createElement('h3');
-            titleElement.textContent = titleLine;
-            card.appendChild(titleElement);
-
-            if (content.includes('- ') || content.includes('1.')) {
-                const list = document.createElement('ul');
-                const items = content.split(/\n- |\n\d\.\s/).filter(item => item.trim() !== '');
-                items.forEach(itemText => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = itemText.trim();
-                    list.appendChild(listItem);
-                });
-                card.appendChild(list);
-            } else {
-                const contentElement = document.createElement('p');
-                contentElement.textContent = content;
-                card.appendChild(contentElement);
-            }
-            resultsContent.appendChild(card);
-        });
-    }
-
-    function showMessage(message) {
-        const existingMessage = document.querySelector('.toast-message');
-        if (existingMessage) existingMessage.remove();
-        const messageContainer = document.createElement('div');
-        messageContainer.className = 'toast-message';
-        messageContainer.textContent = message;
-        document.body.appendChild(messageContainer);
-        Object.assign(messageContainer.style, {
-            position: 'fixed', bottom: '20px', left: '50%',
-            transform: 'translateX(-50%)', padding: '12px 24px',
-            backgroundColor: '#EF4444', color: 'white',
-            borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            zIndex: '1000', fontWeight: '500'
-        });
-        setTimeout(() => messageContainer.remove(), 3000);
+        resultsContent.innerHTML = `<p>${formattedText}</p>`;
     }
 });
