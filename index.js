@@ -1,5 +1,3 @@
-// File 1: package.json
-// This file tells our server which packages it needs to run.
 {
   "name": "classroom-catalyst-backend",
   "version": "1.0.0",
