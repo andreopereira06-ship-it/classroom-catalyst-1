@@ -1,7 +1,7 @@
 const express = require('express');
 const fetch = require('node-fetch');
-const path = require('path');
 const dotenv = require('dotenv');
+const cors = require('cors'); // <-- THIS LINE IS CRITICAL
 
 // Load environment variables from .env file
 dotenv.config();
@@ -9,9 +9,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to serve static files (CSS, JS) from the 'public' directory
-app.use(express.static('public'));
-// Middleware to parse JSON bodies from incoming requests
+// Middleware
+app.use(cors()); // <-- THIS LINE IS CRITICAL
 app.use(express.json());
 
 // This is the endpoint your front-end calls
@@ -21,10 +20,8 @@ app.post('/generate', async (req, res) => {
         return res.status(500).json({ error: 'OPENAI_API_KEY is not configured on the server.' });
     }
 
-    // Get the correct fields from the new form
     const { grade, topic, context, location } = req.body;
 
-    // Build a detailed prompt for OpenAI
     const prompt = `
         You are an expert in creating engaging teaching materials.
         Generate a set of teaching assets based on the following criteria:
@@ -63,7 +60,6 @@ app.post('/generate', async (req, res) => {
         }
 
         const data = await openaiResponse.json();
-        // Send the generated content back to the front-end
         res.json({ assets: data.choices[0].message.content });
 
     } catch (error) {
