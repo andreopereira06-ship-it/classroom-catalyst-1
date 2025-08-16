@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Catalyst</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="app-container">
+        <div class="form-container">
+            <header class="app-header">
+                <h1>Classroom Catalyst ✨</h1>
+                <p>Generate engaging teaching assets in seconds.</p>
+            </header>
+            <form id="asset-form">
+                <div class="input-group">
+                    <label for="grade">Class / Grade</label>
+                    <input type="text" id="grade" placeholder="e.g., 10th Grade" required>
+                </div>
+                <div class="input-group">
+                    <label for="topic">Teaching Topic</label>
+                    <input type="text" id="topic" placeholder="e.g., The Periodic Table" required>
+                </div>
+                <div class="input-group">
+                    <label for="context">Context</label>
+                    <input type="text" id="context" placeholder="e.g., Introduction to Chemistry">
+                </div>
+                <div class="input-group">
+                    <label for="location">City / Location</label>
+                    <input type="text" id="location" placeholder="e.g., Mumbai (for cultural nuances)">
+                </div>
+                <button type="submit" id="generate-btn">Generate Assets</button>
+            </form>
+        </div>
+        <div class="results-container">
+            <div id="loading-spinner" class="hidden">
+                <div class="spinner"></div>
+                <p>Crafting your materials...</p>
+            </div>
+            <div id="results-content">
+                <!-- Generated content will appear here -->
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

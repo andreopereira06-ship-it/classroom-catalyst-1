@@ -1,44 +1,43 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware to serve static files (CSS, JS) from the 'public' directory
+app.use(express.static('public'));
+// Middleware to parse JSON bodies from incoming requests
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.post('/api/generate', async (req, res) => {
+// This is the endpoint your front-end calls
+app.post('/generate', async (req, res) => {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-        return res.status(500).json({ error: 'API key is not configured on the server.' });
+        return res.status(500).json({ error: 'OPENAI_API_KEY is not configured on the server.' });
     }
 
-    // Capture all the new fields from the form
-    const { classStandard, topic, context, location, grade, language, teachingStyle } = req.body;
+    // Get the correct fields from the new form
+    const { grade, topic, context, location } = req.body;
 
-    // Build a more detailed prompt
+    // Build a detailed prompt for OpenAI
     const prompt = `
-        You are an expert in creating engaging teaching materials. 
+        You are an expert in creating engaging teaching materials.
         Generate a set of teaching assets based on the following criteria:
 
-        Class: ${classStandard}
-        Grade Level: ${grade}
+        Class/Grade: ${grade}
         Topic: ${topic}
         Lesson Context: ${context}
-        Teaching Style Preference: ${teachingStyle || 'Balanced'}
-        Language: ${language || 'English'}
         Location for cultural nuance: ${location}
 
-        Please generate the following, formatted for easy parsing:
-        #### A "Hook"
-        A short, interesting question or fact to grab students' attention.
-
-        #### Three Discussion Questions
-        Open-ended questions to foster classroom conversation.
-
-        #### A Fun Activity Idea
-        A simple, interactive activity that can be done in the classroom.
+        Please generate the following, formatted clearly with markdown headings like "#### Heading":
+        - A short, interesting "Hook" to grab students' attention.
+        - Three open-ended "Discussion Questions" to foster conversation.
+        - A simple, interactive "Fun Activity Idea".
 
         Make the content relatable and fun for the specified class and location.
     `;
@@ -64,16 +63,13 @@ app.post('/api/generate', async (req, res) => {
         }
 
         const data = await openaiResponse.json();
-        res.json({ completion: data.choices[0].message.content });
+        // Send the generated content back to the front-end
+        res.json({ assets: data.choices[0].message.content });
 
     } catch (error) {
         console.error("Server Error:", error);
         res.status(500).json({ error: 'An internal server error occurred.' });
     }
-});
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => {
