@@ -4,42 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classroom Catalyst</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Classroom Catalyst 🚀</h1>
-        <p class="subtitle">Generate engaging teaching assets for your classroom.</p>
+    <div class="background-gradient"></div>
+    <main class="main-container">
+        <header class="app-header">
+            <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg>
+            <h1>Classroom Catalyst</h1>
+            <p>Your AI partner for crafting engaging lesson materials.</p>
+        </header>
 
-        <div class="form-group">
-            <label for="class-standard">Class/Standard:</label>
-            <input type="text" id="class-standard" placeholder="e.g., 10th Grade">
+        <div class="form-container">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="class-standard">Class / Standard</label>
+                    <input type="text" id="class-standard" placeholder="e.g., 10th Grade History">
+                </div>
+                <div class="form-group">
+                    <label for="topic">Teaching Topic</label>
+                    <input type="text" id="topic" placeholder="e.g., The Industrial Revolution">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="context">Lesson Context</label>
+                <textarea id="context" placeholder="e.g., Introduction to the unit, focusing on key inventions."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="location">Location (for cultural nuance)</label>
+                <input type="text" id="location" placeholder="e.g., Ahmedabad">
+            </div>
+            <button id="generate-btn">
+                <span class="btn-text">Generate Assets</span>
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+            </button>
         </div>
 
-        <div class="form-group">
-            <label for="topic">Teaching Topic:</label>
-            <input type="text" id="topic" placeholder="e.g., Photosynthesis">
+        <div id="loading" class="loading-container hidden">
+            <div class="loading-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <p>Crafting your materials...</p>
         </div>
 
-        <div class="form-group">
-            <label for="context">Context:</label>
-            <textarea id="context" placeholder="e.g., A follow-up to a lab experiment"></textarea>
+        <div id="results" class="results-container hidden">
+            <!-- Generated content will be inserted here by script.js -->
         </div>
-
-        <div class="form-group">
-            <label for="location">Location (City):</label>
-            <input type="text" id="location" placeholder="e.g., Mumbai">
-        </div>
-
-        <button id="generate-btn">Generate Assets</button>
-
-        <div id="loading" class="hidden">Generating...</div>
-
-        <div id="results" class="hidden">
-            <h2>Generated Assets</h2>
-            <div id="output"></div>
-        </div>
-    </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
