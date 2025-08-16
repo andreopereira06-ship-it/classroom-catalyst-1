@@ -1,5 +1,3 @@
-// This is our secure backend server.
-
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
@@ -7,34 +5,40 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies and serve static files from the 'public' directory
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// This is our secure API endpoint. The browser will send requests here.
 app.post('/api/generate', async (req, res) => {
-    // The API key is retrieved from the secure environment variables, not from the client.
     const apiKey = process.env.OPENAI_API_KEY;
-
     if (!apiKey) {
         return res.status(500).json({ error: 'API key is not configured on the server.' });
     }
 
-    const { classStandard, topic, context, location } = req.body;
+    // Capture all the new fields from the form
+    const { classStandard, topic, context, location, grade, language, teachingStyle } = req.body;
 
+    // Build a more detailed prompt
     const prompt = `
         You are an expert in creating engaging teaching materials. 
-        Generate a set of teaching assets for a class.
+        Generate a set of teaching assets based on the following criteria:
 
-        Class/Standard: ${classStandard}
+        Class: ${classStandard}
+        Grade Level: ${grade}
         Topic: ${topic}
-        Context: ${context}
+        Lesson Context: ${context}
+        Teaching Style Preference: ${teachingStyle || 'Balanced'}
+        Language: ${language || 'English'}
         Location for cultural nuance: ${location}
 
-        Please generate the following:
-        1.  **A "Hook":** A short, interesting question or fact to grab students' attention.
-        2.  **Three Discussion Questions:** Open-ended questions to foster classroom conversation.
-        3.  **A Fun Activity Idea:** A simple, interactive activity that can be done in the classroom.
+        Please generate the following, formatted for easy parsing:
+        #### A "Hook"
+        A short, interesting question or fact to grab students' attention.
+
+        #### Three Discussion Questions
+        Open-ended questions to foster classroom conversation.
+
+        #### A Fun Activity Idea
+        A simple, interactive activity that can be done in the classroom.
 
         Make the content relatable and fun for the specified class and location.
     `;
@@ -68,11 +72,9 @@ app.post('/api/generate', async (req, res) => {
     }
 });
 
-// Fallback to serve the main HTML file for any other request
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
