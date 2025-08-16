@@ -10,53 +10,67 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="background-gradient"></div>
-    <main class="main-container">
-        <header class="app-header">
-            <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg>
-            <h1>Classroom Catalyst</h1>
-            <p>Your AI partner for crafting engaging lesson materials.</p>
-        </header>
+    <div class="card">
+        <div class="card-content">
+            <header class="card-header">
+                <h1>Classroom Catalyst</h1>
+                <p>Generate engaging and interactive classroom assets tailored to your students.</p>
+            </header>
 
-        <div class="form-container">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="class-standard">Class / Standard</label>
-                    <input type="text" id="class-standard" placeholder="e.g., 10th Grade History">
+            <main id="form-view">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="class-input">Class</label>
+                        <input type="text" id="class-input" placeholder="e.g. MBA Year 1">
+                    </div>
+                    <div class="form-group">
+                        <label for="topic">Teaching Topic</label>
+                        <input type="text" id="topic" placeholder="e.g. Principles of Marketing">
+                    </div>
+                    <div class="form-group">
+                        <label for="context">Context</label>
+                        <select id="context">
+                            <option value="">Choose a context</option>
+                            <option value="Exam Preparation">Exam Preparation</option>
+                            <option value="Group Activity">Group Activity</option>
+                            <option value="Ice Breaker">Ice Breaker</option>
+                            <option value="Revision">Revision</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g. Ahmedabad">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="grade-level">Grade</label>
+                        <select id="grade-level">
+                            <option value="">Select Grade</option>
+                            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+                            <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
+                            <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
+                            <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+                            <option>Undergraduate</option><option>MBA</option><option>PhD</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="topic">Teaching Topic</label>
-                    <input type="text" id="topic" placeholder="e.g., The Industrial Revolution">
+                <div class="button-container">
+                    <button id="generate-btn">Generate Teaching Assets</button>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="context">Lesson Context</label>
-                <textarea id="context" placeholder="e.g., Introduction to the unit, focusing on key inventions."></textarea>
-            </div>
-            <div class="form-group">
-                <label for="location">Location (for cultural nuance)</label>
-                <input type="text" id="location" placeholder="e.g., Ahmedabad">
-            </div>
-            <button id="generate-btn">
-                <span class="btn-text">Generate Assets</span>
-                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
-            </button>
-        </div>
+                <div id="loading" class="loading-container hidden">
+                    <div class="spinner"></div>
+                    <span>Generating...</span>
+                </div>
+            </main>
 
-        <div id="loading" class="loading-container hidden">
-            <div class="loading-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
+            <div id="results-view" class="hidden">
+                <div class="results-header">
+                    <h2>Generated Assets</h2>
+                    <button id="back-btn">← Create Another</button>
+                </div>
+                <div id="results-content"></div>
             </div>
-            <p>Crafting your materials...</p>
         </div>
-
-        <div id="results" class="results-container hidden">
-            <!-- Generated content will be inserted here by script.js -->
-        </div>
-    </main>
-
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
