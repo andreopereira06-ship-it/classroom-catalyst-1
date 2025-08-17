@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom Catalyst</title>
+    <title>Classroom Catalyst 3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,10 +16,11 @@
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         @keyframes gradient-pan { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .animate-gradient-pan { background-size: 400% 400%; animation: gradient-pan 15s ease infinite; }
+        @keyframes float-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
         .custom-checkbox:checked {
             background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-            background-color: #b45309; /* Amber-700 */
-            border-color: #b45309;
+            background-color: #059669; border-color: #059669;
         }
     </style>
 </head>
@@ -78,22 +79,21 @@
             }
         }
 
-        // --- PARSING HELPER ---
+        // --- PARSING HELPER (ROBUST VERSION) ---
         function parseAssets(text) {
             if (!text) return [];
-            return text.split('[CARD_BREAK]')
-                .map(cardText => cardText.trim())
-                .map(cardText => {
-                    const match = cardText.match(/#### (.*?)\n([\s\S]*)/);
-                    if (!match) return null;
-                    return { 
-                        title: match[1].replace(/\*\*/g, ''), 
-                        content: match[2].trim() 
-                    };
-                })
-                .filter(Boolean);
+            // Split the text by the '####' delimiter, but keep the delimiter
+            const parts = text.split(/(?=#### )/g).filter(p => p.trim());
+            
+            return parts.map(cardText => {
+                const match = cardText.match(/#### (.*?)\n([\s\S]*)/);
+                if (!match) return null; // Return null for malformed cards
+                return { 
+                    title: match[1].replace(/\*\*/g, ''), 
+                    content: match[2].trim() 
+                };
+            }).filter(Boolean); // This will filter out any null values
         }
-
 
         // --- NAVIGATION & RENDERING ---
         function navigateTo(page) {
@@ -122,7 +122,7 @@
         
         // --- PAGE TEMPLATES ---
         function renderWelcomePage() {
-             return `<div class="relative text-center py-16 px-4 flex flex-col items-center justify-center min-h-screen overflow-hidden bg-gradient-to-br from-yellow-200 via-amber-200 to-orange-300 animate-gradient-pan"><div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/subtle-carbon.png')] opacity-5"></div><div class="relative z-10"><div class="bg-white/80 backdrop-blur-md p-10 rounded-2xl shadow-2xl border border-white/50"><h1 class="font-display text-5xl md:text-6xl font-bold text-slate-800 mb-4">Classroom Catalyst</h1><p class="text-xl text-slate-600 max-w-2xl mx-auto mb-10">Your AI partner for creating dynamic teaching assets. Spark curiosity and foster interactive learning in seconds.</p><button id="get-started-btn" class="font-semibold text-white bg-amber-600 py-4 px-10 rounded-full text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl hover:bg-amber-700">Unlock Ideas</button></div></div></div>`;
+             return `<div class="relative text-center py-16 px-4 flex flex-col items-center justify-center min-h-screen overflow-hidden bg-gradient-to-br from-lime-200 via-teal-200 to-green-300 animate-gradient-pan"><div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/subtle-carbon.png')] opacity-5"></div><div class="relative z-10 animate-float-slow"><div class="bg-white/80 backdrop-blur-md p-10 rounded-2xl shadow-2xl border border-white/50"><h1 class="font-display text-5xl md:text-6xl font-bold text-slate-800 mb-4">Classroom Catalyst</h1><p class="text-xl text-slate-600 max-w-2xl mx-auto mb-10">Your AI partner for creating dynamic teaching assets. Spark curiosity and foster interactive learning in seconds.</p><button id="get-started-btn" class="font-semibold text-white bg-emerald-600 py-4 px-10 rounded-full text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl hover:bg-emerald-700">Unlock Ideas</button></div></div></div>`;
         }
         
         function renderMainPage() {
@@ -139,7 +139,7 @@
 
             return cards.map((card) => {
                 const content = card.content
-                    .replace(/\*\*(.*?)\*\*/g, '$1')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:underline">$1</a>')
                     .replace(/\n- /g, '<ul class="list-disc list-inside space-y-2 text-slate-600"><li>')
                     .replace(/(\n(?!- ))/g, '</p><p class="text-slate-600 leading-relaxed">')
