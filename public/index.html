@@ -37,6 +37,7 @@
         const state = { 
             currentPage: 'welcome', 
             generatedAssets: null,
+            lastInputs: {}, // New: To store form data
             error: null,
             isLoading: false
         };
@@ -109,11 +110,11 @@
         
         function renderMainPage() {
             const assetTypes = [ { id: 'icebreaker', label: 'Icebreaker Question' }, { id: 'hook', label: 'Contextual Hook' }, { id: 'coldCall', label: 'Cold-Call Questions' }, { id: 'funFacts', label: 'Fun Facts Capsule' }, { id: 'examples', label: 'Relatable Examples' }, { id: 'debate', label: 'Mini Debate Prompts' }, { id: 'poll', label: 'Quick Poll Ideas' }, { id: 'challenge', label: 'Gamified Challenge' }, { id: 'wrapUp', label: 'Wrap-up Sparks' } ];
-            return `<header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200"><div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center"><h1 class="font-display text-3xl font-bold text-slate-800 cursor-pointer" id="home-btn">Classroom Catalyst</h1></div></header><div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8"><div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start"><div class="bg-white p-8 rounded-xl shadow-lg border border-slate-100"><h2 class="font-display text-2xl font-bold text-slate-800 mb-2">Create Your Lesson Plan</h2><p class="text-slate-500 mb-8">Fill in the details to generate a complete, timed lesson plan.</p><form id="asset-form"><div class="space-y-6"><div><label for="grade" class="block text-sm font-medium text-slate-700 mb-1">Class / Grade</label><input type="text" id="grade" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., 10th Grade" required></div><div><label for="topic" class="block text-sm font-medium text-slate-700 mb-1">Teaching Topic</label><input type="text" id="topic" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., The Periodic Table" required></div><div><label for="duration" class="block text-sm font-medium text-slate-700 mb-1">Class Duration (minutes)</label><input type="number" id="duration" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., 45" required></div><div><label for="context" class="block text-sm font-medium text-slate-700 mb-1">Context</label><input type="text" id="context" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., Introduction to Chemistry"></div><div><label for="location" class="block text-sm font-medium text-slate-700 mb-1">City / Location</label><input type="text" id="location" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., Mumbai (for cultural nuances)"></div><div><label class="block text-sm font-medium text-slate-700">Assets to Include in Plan</label><div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">${assetTypes.map(asset => `<label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" name="outputType" value="${asset.label}" class="custom-checkbox h-4 w-4 rounded border-slate-300 text-amber-700 focus:ring-amber-500"><span class="text-sm text-slate-600">${asset.label}</span></label>`).join('')}</div></div><div><button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors">Generate Lesson Plan</button></div></div></form></div><div id="results-container" class="space-y-6 min-h-[500px]">${renderResultsContent()}</div></div></div>`;
+            return `<header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200"><div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center"><h1 class="font-display text-3xl font-bold text-slate-800 cursor-pointer" id="home-btn">Classroom Catalyst</h1></div></header><div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8"><div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start"><div class="bg-white p-8 rounded-xl shadow-lg border border-slate-100"><h2 class="font-display text-2xl font-bold text-slate-800 mb-2">Create Your Lesson Plan</h2><p class="text-slate-500 mb-8">Fill in the details to generate a complete, timed lesson plan.</p><form id="asset-form"><div class="space-y-6"><div><label for="grade" class="block text-sm font-medium text-slate-700 mb-1">Class / Grade</label><input type="text" id="grade" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., 10th Grade" value="${state.lastInputs.grade || ''}" required></div><div><label for="topic" class="block text-sm font-medium text-slate-700 mb-1">Teaching Topic</label><input type="text" id="topic" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., The Periodic Table" value="${state.lastInputs.topic || ''}" required></div><div><label for="duration" class="block text-sm font-medium text-slate-700 mb-1">Class Duration (minutes)</label><input type="number" id="duration" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., 45" value="${state.lastInputs.duration || ''}" required></div><div><label for="context" class="block text-sm font-medium text-slate-700 mb-1">Context</label><input type="text" id="context" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., Introduction to Chemistry" value="${state.lastInputs.context || ''}"></div><div><label for="location" class="block text-sm font-medium text-slate-700 mb-1">City / Location</label><input type="text" id="location" class="bg-slate-100 mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., Mumbai (for cultural nuances)" value="${state.lastInputs.location || ''}"></div><div><div class="flex justify-between items-center"><label class="block text-sm font-medium text-slate-700">Assets to Include in Plan</label><div class="space-x-2"><button type="button" id="select-all-btn" class="text-xs font-semibold text-amber-600 hover:underline">Select All</button><button type="button" id="clear-all-btn" class="text-xs font-semibold text-slate-500 hover:underline">Clear All</button></div></div><div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">${assetTypes.map(asset => `<label class="flex items-center space-x-2 cursor-pointer"><input type="checkbox" name="outputType" value="${asset.label}" class="custom-checkbox h-4 w-4 rounded border-slate-300 text-amber-700 focus:ring-amber-500" ${state.lastInputs.outputTypes?.includes(asset.label) ? 'checked' : ''}><span class="text-sm text-slate-600">${asset.label}</span></label>`).join('')}</div></div><div><button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors">Generate Lesson Plan</button></div></div></form></div><div id="results-container" class="space-y-6 min-h-[500px]">${renderResultsContent()}</div></div></div>`;
         }
 
         function renderResultsContent() {
-            if (state.isLoading) return `<div class="bg-white text-center text-slate-400 h-full flex flex-col justify-center items-center p-8 rounded-xl shadow-lg border border-slate-100"><div class="animate-spin h-12 w-12 text-amber-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div><h3 class="font-display text-xl font-bold mt-4 text-slate-600">Generating...</h3></div>`;
+            if (state.isLoading) return `<div class="space-y-6">${[...Array(3)].map(() => `<div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100 animate-pulse"><div class="h-6 bg-slate-200 rounded w-1/3 mb-4"></div><div class="space-y-2"><div class="h-4 bg-slate-200 rounded w-full"></div><div class="h-4 bg-slate-200 rounded w-5/6"></div><div class="h-4 bg-slate-200 rounded w-3/4"></div></div></div>`).join('')}</div>`;
             if (state.error) return `<div class="bg-white p-8 rounded-xl shadow-lg border border-red-200 text-center text-red-500"><h3 class="text-xl font-bold mb-2">An Error Occurred</h3><p>${state.error}</p></div>`;
             if (!state.generatedAssets) return `<div class="bg-white text-center text-slate-400 h-full flex flex-col justify-center items-center p-8 rounded-xl shadow-lg border border-slate-100"><div class="w-24 h-24 mx-auto text-slate-200"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.998 15.998 0 011.622-3.385m5.043.025a15.998 15.998 0 001.622-3.385m3.388 1.62a15.998 15.998 0 00-5.044-1.62m-5.043.025a15.998 15.998 0 01-3.388-1.62m10.13 6.653a6 6 0 00-3.388-1.62m-5.043-.025a6 6 0 01-3.388-1.62m10.13 6.653a15.998 15.998 0 00-1.622 3.385m-5.043-.025a15.998 15.998 0 01-1.622 3.385m5.043.025a15.998 15.998 0 00-3.388 1.62m-5.043-.025a15.998 15.998 0 01-3.388 1.62" /></svg></div><h3 class="font-display text-xl font-bold mt-4 text-slate-600">Your lesson plan will appear here.</h3><p class="mt-1 text-slate-500">Fill out the form to get started.</p></div>`;
             
@@ -124,7 +125,13 @@
             });
 
             return cards.map((card) => {
-                const content = card.content.replace(/\n- /g, '<ul class="list-disc list-inside space-y-2 text-slate-600"><li>').replace(/(\n(?!- ))/g, '</p><p class="text-slate-600 leading-relaxed">').replace(/<\/li>\n/g, '</li></ul>').replace(/<\/li><\/ul>/g, '</li></ul>');
+                const content = card.content
+                    .replace(/\*\*(.*?)\*\*/g, '$1')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-amber-600 hover:underline">$1</a>')
+                    .replace(/\n- /g, '<ul class="list-disc list-inside space-y-2 text-slate-600"><li>')
+                    .replace(/(\n(?!- ))/g, '</p><p class="text-slate-600 leading-relaxed">')
+                    .replace(/<\/li>\n/g, '</li></ul>')
+                    .replace(/<\/li><\/ul>/g, '</li></ul>');
                 return `<div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100 fade-in"><h3 class="font-display text-xl font-bold mb-3 text-slate-800">${card.title}</h3><div class="prose max-w-none">${content.replace(/<p><\/p>/g, '')}</div></div>`;
             }).join('');
         };
@@ -139,6 +146,7 @@
                     e.preventDefault();
                     const selectedTypes = Array.from(document.querySelectorAll('input[name="outputType"]:checked')).map(cb => cb.value);
                     if (selectedTypes.length === 0) { alert('Please select at least one output type.'); return; }
+                    
                     const payload = {
                         grade: document.getElementById('grade').value,
                         topic: document.getElementById('topic').value,
@@ -147,7 +155,31 @@
                         location: document.getElementById('location').value,
                         outputTypes: selectedTypes
                     };
+                    state.lastInputs = payload; // Save inputs
                     generateAssets(payload);
+                });
+
+                document.getElementById('select-all-btn').onclick = () => {
+                    document.querySelectorAll('input[name="outputType"]').forEach(cb => cb.checked = true);
+                };
+                document.getElementById('clear-all-btn').onclick = () => {
+                    document.querySelectorAll('input[name="outputType"]').forEach(cb => cb.checked = false);
+                };
+                document.getElementById('duration').addEventListener('input', (e) => {
+                    const duration = parseInt(e.target.value, 10);
+                    const checkboxes = document.querySelectorAll('input[name="outputType"]');
+                    let defaults = [];
+                    if (duration < 30) {
+                        defaults = ['Icebreaker Question', 'Fun Facts Capsule'];
+                    } else if (duration >= 30 && duration < 60) {
+                        defaults = ['Contextual Hook', 'Relatable Examples', 'Gamified Challenge', 'Wrap-up Sparks'];
+                    } else if (duration >= 60) {
+                        checkboxes.forEach(cb => cb.checked = true);
+                        return;
+                    }
+                    checkboxes.forEach(cb => {
+                        cb.checked = defaults.includes(cb.value);
+                    });
                 });
             }
         }
