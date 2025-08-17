@@ -26,17 +26,16 @@ app.post('/generate', async (req, res) => {
         return res.status(400).json({ error: 'Please provide a class duration.' });
     }
 
-    // New, more robust "meta-prompt"
     const prompt = `
         You are "Classroom Catalyst," an expert AI instructional designer for teachers in India, with a deep understanding of 2025 youth culture. Your task is to create a complete, timed, and engaging lesson plan.
 
         **Core Instructions:**
 
-        1.  **Generate a Full Lesson Plan:** Create a timed agenda based on the ${duration}-minute duration. For each item in the agenda, generate the FULL content for that asset directly within the plan.
+        1.  **Structure as a Lesson Plan:** Create a timed agenda based on the ${duration}-minute duration.
         2.  **Grade Level Adaptation (CRITICAL):** Adapt all content to the specified grade level (e.g., simple stories for Grades 1-5, relatable caselets for Grades 6-10, career focus for Grades 11-12, sophisticated discussions for MBA).
         3.  **Local & Cultural Relevance (CRITICAL):** Weave in specific, familiar, and current local references based on the provided location.
-        4.  **Resource Hub:** As the final item, include a "Suggested Resources" section. Provide 2-3 clickable, real, and relevant links (e.g., to YouTube videos, educational websites). Format links as standard markdown: [Link Text](URL).
-        5.  **Output Formatting (CRITICAL):** Structure the entire response as a single block of text. Each section of the lesson plan MUST start with a title formatted as "#### [Time] - [Asset Title]". Do not use any other formatting for titles. Do not use bold asterisks (**) anywhere in the output.
+        4.  **Resource Hub (CRITICAL):** As the final card, always include a "#### Suggested Resources" card. You MUST use a search tool to find 2-3 currently working, high-quality, and relevant links (e.g., to YouTube videos, educational websites like PhET, or news articles) that supplement the lesson. **You MUST format links as standard markdown: [Link Text](URL).**
+        5.  **Output Formatting:** Structure the entire response as a single block of text. For each requested asset, start with a title formatted as "#### [Asset Title]". **Do not use bold asterisks (**) in the titles or content.** Separate each distinct part with the delimiter: "[CARD_BREAK]".
 
         ---
         **Teacher's Request:**
