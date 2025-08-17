@@ -37,7 +37,7 @@
         const state = { 
             currentPage: 'welcome', 
             generatedAssets: null,
-            lastInputs: {}, // New: To store form data
+            lastInputs: {},
             error: null,
             isLoading: false
         };
@@ -77,6 +77,23 @@
                 render();
             }
         }
+
+        // --- PARSING HELPER ---
+        function parseAssets(text) {
+            if (!text) return [];
+            return text.split('[CARD_BREAK]')
+                .map(cardText => cardText.trim())
+                .map(cardText => {
+                    const match = cardText.match(/#### (.*?)\n([\s\S]*)/);
+                    if (!match) return null;
+                    return { 
+                        title: match[1].replace(/\*\*/g, ''), 
+                        content: match[2].trim() 
+                    };
+                })
+                .filter(Boolean);
+        }
+
 
         // --- NAVIGATION & RENDERING ---
         function navigateTo(page) {
@@ -118,11 +135,7 @@
             if (state.error) return `<div class="bg-white p-8 rounded-xl shadow-lg border border-red-200 text-center text-red-500"><h3 class="text-xl font-bold mb-2">An Error Occurred</h3><p>${state.error}</p></div>`;
             if (!state.generatedAssets) return `<div class="bg-white text-center text-slate-400 h-full flex flex-col justify-center items-center p-8 rounded-xl shadow-lg border border-slate-100"><div class="w-24 h-24 mx-auto text-slate-200"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.998 15.998 0 011.622-3.385m5.043.025a15.998 15.998 0 001.622-3.385m3.388 1.62a15.998 15.998 0 00-5.044-1.62m-5.043.025a15.998 15.998 0 01-3.388-1.62m10.13 6.653a6 6 0 00-3.388-1.62m-5.043-.025a6 6 0 01-3.388-1.62m10.13 6.653a15.998 15.998 0 00-1.622 3.385m-5.043-.025a15.998 15.998 0 01-1.622 3.385m5.043.025a15.998 15.998 0 00-3.388 1.62m-5.043-.025a15.998 15.998 0 01-3.388 1.62" /></svg></div><h3 class="font-display text-xl font-bold mt-4 text-slate-600">Your lesson plan will appear here.</h3><p class="mt-1 text-slate-500">Fill out the form to get started.</p></div>`;
             
-            const cards = state.generatedAssets.split('[CARD_BREAK]').map(cardText => cardText.trim()).filter(Boolean).map(cardText => {
-                const match = cardText.match(/#### (.*?)\n([\s\S]*)/);
-                if (!match) return { title: 'Error', content: 'Could not parse this card.' };
-                return { title: match[1].replace(/\*\*/g, ''), content: match[2].trim() };
-            });
+            const cards = parseAssets(state.generatedAssets);
 
             return cards.map((card) => {
                 const content = card.content
@@ -155,7 +168,7 @@
                         location: document.getElementById('location').value,
                         outputTypes: selectedTypes
                     };
-                    state.lastInputs = payload; // Save inputs
+                    state.lastInputs = payload;
                     generateAssets(payload);
                 });
 
